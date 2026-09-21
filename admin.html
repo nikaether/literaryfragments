@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>aether.nic — writing room</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --deep: #1b1830;
+    --mid: #34294f;
+    --dusk: #4a3a66;
+    --lavender: #b9a8dd;
+    --lavender-soft: #d8cdec;
+    --teal: #7fa89f;
+    --rose: #d7aebd;
+    --cream: #f4ede2;
+    --cream-dim: #cfc4d9;
+    --ink: #221d33;
+    --line: rgba(244, 237, 226, 0.16);
+    --bad: #e2a6a6;
+    --good: #9fc7ae;
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "EB Garamond", Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--deep), var(--mid) 60%, #2c2947);
+    color: var(--cream);
+    font-family: var(--body);
+    line-height: 1.6;
+  }
+  a { color: var(--lavender-soft); }
+
+  /* ---------- gate ---------- */
+  #gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .gate-card {
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    padding: 2.6rem 2rem;
+    background: rgba(244, 237, 226, 0.05);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .gate-card h1 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.8rem;
+    margin: 0 0 0.4rem;
+    color: var(--lavender-soft);
+  }
+  .gate-card p { color: var(--cream-dim); font-size: 0.9rem; margin: 0 0 1.6rem; }
+  .gate-card input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font-family: var(--body);
+    font-size: 1rem;
+    border-radius: 3px;
+    margin-bottom: 1rem;
+  }
+  button {
+    font-family: var(--body);
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border-radius: 3px;
+    border: 1px solid var(--lavender);
+    background: transparent;
+    color: var(--lavender-soft);
+    padding: 0.65rem 1.3rem;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  button:hover { background: var(--lavender); color: var(--ink); }
+  button.primary { background: var(--lavender); color: var(--ink); }
+  button.primary:hover { opacity: 0.9; }
+  button.danger { border-color: var(--bad); color: var(--bad); }
+  button.danger:hover { background: var(--bad); color: var(--ink); }
+  button.ghost { border-color: var(--line); color: var(--cream-dim); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .gate-error { color: var(--bad); font-size: 0.85rem; min-height: 1.2em; margin-top: -0.5rem; margin-bottom: 0.8rem; }
+
+  /* ---------- app shell ---------- */
+  #app { display: none; max-width: 880px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+  .app-header { text-align: center; margin-bottom: 2rem; }
+  .app-header .eyebrow {
+    display: block;
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--teal);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+  .app-header h1 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 2.4rem;
+    margin: 0;
+  }
+
+  .token-box {
+    background: rgba(244, 237, 226, 0.05);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+  .token-box.connected { border-color: var(--good); }
+  .token-box details summary { cursor: pointer; color: var(--cream-dim); }
+  .token-box p { color: var(--cream-dim); margin: 0.6rem 0; }
+  .token-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 0.8rem; }
+  .token-row input {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.6rem 0.8rem;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font-family: monospace;
+    font-size: 0.85rem;
+    border-radius: 3px;
+  }
+  .status-pill { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bad); display: inline-block; }
+  .dot.on { background: var(--good); }
+
+  nav.tabs {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  nav.tabs button {
+    border-color: var(--line);
+    color: var(--cream-dim);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1rem;
+    background: transparent;
+  }
+  nav.tabs button.active { background: var(--lavender); color: var(--ink); border-color: var(--lavender); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .card {
+    background: rgba(244, 237, 226, 0.05);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .card h2 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin: 0 0 1.2rem;
+    color: var(--lavender-soft);
+  }
+  label { display: block; font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--teal); margin: 1rem 0 0.4rem; }
+  label:first-of-type { margin-top: 0; }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font-family: var(--body);
+    font-size: 1rem;
+    border-radius: 3px;
+    resize: vertical;
+  }
+  textarea { min-height: 160px; line-height: 1.6; }
+  .hint { color: var(--cream-dim); font-size: 0.8rem; opacity: 0.75; margin-top: 0.3rem; }
+  .form-actions { display: flex; gap: 0.7rem; margin-top: 1.4rem; align-items: center; flex-wrap: wrap; }
+  .msg { font-size: 0.85rem; }
+  .msg.ok { color: var(--good); }
+  .msg.err { color: var(--bad); }
+
+  .entries { margin-top: 2rem; }
+  .entries h3 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--cream-dim);
+    font-size: 1.05rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.6rem;
+  }
+  .entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .entry:last-child { border-bottom: none; }
+  .entry .preview { flex: 1; min-width: 0; }
+  .entry .preview .t { font-family: var(--display); font-style: italic; color: var(--cream); }
+  .entry .preview .s { color: var(--cream-dim); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .entry .actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  .entry .actions button { padding: 0.4rem 0.8rem; font-size: 0.78rem; }
+
+  .loading { color: var(--cream-dim); font-style: italic; font-size: 0.9rem; }
+
+  footer.admin-footer {
+    text-align: center;
+    color: var(--cream-dim);
+    font-size: 0.8rem;
+    margin-top: 3rem;
+    opacity: 0.7;
+  }
+  footer.admin-footer a { color: var(--lavender-soft); }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <h1>the writing room</h1>
+    <p>this page is not linked from the site. enter your passcode to continue.</p>
+    <input type="password" id="pin-input" placeholder="passcode" autocomplete="off">
+    <div class="gate-error" id="pin-error"></div>
+    <button class="primary" id="pin-submit" style="width:100%;">Enter</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="app-header">
+    <span class="eyebrow">private</span>
+    <h1>the writing room</h1>
+  </div>
+
+  <div class="token-box" id="token-box">
+    <div class="status-pill"><span class="dot" id="token-dot"></span> <span id="token-status">not connected to GitHub</span></div>
+    <details style="margin-top: 0.8rem;">
+      <summary>connect / change token</summary>
+      <p>Create a <strong>fine-grained personal access token</strong> at
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens</a>,
+        scoped only to the <strong>literaryfragments</strong> repository, with
+        <strong>Contents: Read and write</strong> permission. Paste it below — it is saved only in this browser
+        (localStorage) and used only to talk to GitHub's API directly from this page.</p>
+      <div class="token-row">
+        <input type="password" id="gh-token" placeholder="github_pat_...">
+        <button id="save-token">Save token</button>
+        <button class="ghost" id="clear-token">Forget token</button>
+      </div>
+    </details>
+  </div>
+
+  <nav class="tabs">
+    <button data-tab="poems" class="active">Poetry</button>
+    <button data-tab="fragments">Fragments</button>
+    <button data-tab="pharmaceutics">Pharmaceutics</button>
+  </nav>
+
+  <div id="panels"></div>
+
+  <footer class="admin-footer">
+    changes publish straight to the <strong>literaryfragments</strong> repo and go live on the site within a minute or two ·
+    <a href="index.html">view site</a>
+  </footer>
+</div>
+
+<script src="assets/site.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var PIN_HASH = "028b49d2e028f39a4d44eece21c8c0d7a2354bd636695b62eadb46c52e1770fb";
+  var OWNER = "nikaether";
+  var REPO = "literaryfragments";
+  var BRANCH = "main";
+  var TOKEN_KEY = "aether_admin_gh_token";
+
+  // ---------- PIN gate ----------
+  async function sha256Hex(str) {
+    var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+  }
+
+  var pinInput = document.getElementById("pin-input");
+  var pinError = document.getElementById("pin-error");
+
+  async function tryUnlock() {
+    var val = pinInput.value;
+    var hash = await sha256Hex(val);
+    if (hash === PIN_HASH) {
+      document.getElementById("gate").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      initApp();
+    } else {
+      pinError.textContent = "that's not it";
+      pinInput.value = "";
+      pinInput.focus();
+    }
+  }
+  document.getElementById("pin-submit").addEventListener("click", tryUnlock);
+  pinInput.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+  pinInput.focus();
+
+  // ---------- base64 <-> utf8 ----------
+  function utf8ToB64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+  function b64ToUtf8(b64) {
+    return decodeURIComponent(escape(atob(b64.replace(/\n/g, ""))));
+  }
+
+  // ---------- GitHub content API ----------
+  function getToken() { return localStorage.getItem(TOKEN_KEY) || ""; }
+
+  function ghHeaders() {
+    var h = { "Accept": "application/vnd.github+json" };
+    var t = getToken();
+    if (t) h["Authorization"] = "token " + t;
+    return h;
+  }
+
+  async function ghGetFile(path) {
+    var res = await fetch(
+      "https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + path + "?ref=" + BRANCH + "&_=" + Date.now(),
+      { headers: ghHeaders(), cache: "no-store" }
+    );
+    if (!res.ok) throw new Error("Could not read " + path + " (" + res.status + ")");
+    var json = await res.json();
+    return { sha: json.sha, data: JSON.parse(b64ToUtf8(json.content)) };
+  }
+
+  async function ghPutFile(path, dataArray, sha, message) {
+    var body = {
+      message: message,
+      content: utf8ToB64(JSON.stringify(dataArray, null, 2) + "\n"),
+      branch: BRANCH
+    };
+    if (sha) body.sha = sha;
+    var res = await fetch(
+      "https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + path,
+      { method: "PUT", headers: Object.assign({ "Content-Type": "application/json" }, ghHeaders()), body: JSON.stringify(body) }
+    );
+    if (!res.ok) {
+      var errText = "";
+      try { errText = (await res.json()).message; } catch (e) {}
+      throw new Error("GitHub rejected the update (" + res.status + ") " + errText);
+    }
+    return res.json();
+  }
+
+  // ---------- token UI ----------
+  var tokenDot = document.getElementById("token-dot");
+  var tokenStatus = document.getElementById("token-status");
+  var tokenBox = document.getElementById("token-box");
+
+  function refreshTokenUI() {
+    var t = getToken();
+    if (t) {
+      tokenDot.classList.add("on");
+      tokenStatus.textContent = "connected · token saved in this browser";
+      tokenBox.classList.add("connected");
+    } else {
+      tokenDot.classList.remove("on");
+      tokenStatus.textContent = "not connected — open “connect / change token” below";
+      tokenBox.classList.remove("connected");
+    }
+  }
+
+  document.getElementById("save-token").addEventListener("click", function () {
+    var v = document.getElementById("gh-token").value.trim();
+    if (!v) return;
+    localStorage.setItem(TOKEN_KEY, v);
+    document.getElementById("gh-token").value = "";
+    refreshTokenUI();
+  });
+  document.getElementById("clear-token").addEventListener("click", function () {
+    localStorage.removeItem(TOKEN_KEY);
+    refreshTokenUI();
+  });
+
+  // ---------- content type configs ----------
+  var TYPES = {
+    poems: {
+      path: "data/poems.json",
+      label: "Poem",
+      idPrefix: "poem",
+      fields: [
+        { id: "title", label: "Title", type: "text", placeholder: "Poem II" },
+        { id: "content", label: "Poem text", type: "textarea", placeholder: "Line by line...", hint: "Line breaks are kept exactly as you type them." }
+      ],
+      empty: { title: "", content: "" },
+      preview: function (e) { return { t: e.title || "Untitled", s: (e.content || "").replace(/\n/g, " ") }; },
+      renderFn: "renderPoem"
+    },
+    fragments: {
+      path: "data/fragments.json",
+      label: "Fragment",
+      idPrefix: "frag",
+      fields: [
+        { id: "meta", label: "Date / label (optional)", type: "text", placeholder: "Feb 18, 2026" },
+        { id: "body", label: "Fragment text", type: "textarea", placeholder: "Write it out...", hint: "Leave a blank line between paragraphs." }
+      ],
+      empty: { meta: "", body: "" },
+      preview: function (e) { return { t: e.meta || "—", s: (e.body || "").replace(/\n/g, " ") }; },
+      renderFn: "renderFragment"
+    },
+    pharmaceutics: {
+      path: "data/pharmaceutics.json",
+      label: "Essay",
+      idPrefix: "pharm",
+      fields: [
+        { id: "title", label: "Title", type: "text", placeholder: "Essay title" },
+        { id: "date", label: "Date (optional)", type: "text", placeholder: "March 3, 2026" },
+        { id: "body", label: "Essay body", type: "textarea", placeholder: "Write the essay...", hint: "Blank line = new paragraph. \"## \" starts a subheading. \"> \" starts a highlighted quote. **word** for bold." }
+      ],
+      empty: { title: "", date: "", body: "" },
+      preview: function (e) { return { t: e.title || "Untitled", s: e.date || "" }; },
+      renderFn: "renderEssay"
+    }
+  };
+
+  var state = {}; // key -> { sha, data, editingId }
+
+  function genId(prefix) {
+    return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  function panelHtml(key, cfg) {
+    var fieldsHtml = cfg.fields.map(function (f) {
+      if (f.type === "textarea") {
+        return '<label for="f-' + key + '-' + f.id + '">' + f.label + '</label>' +
+          '<textarea id="f-' + key + '-' + f.id + '" placeholder="' + (f.placeholder || "") + '"></textarea>' +
+          (f.hint ? '<div class="hint">' + f.hint + '</div>' : "");
+      }
+      return '<label for="f-' + key + '-' + f.id + '">' + f.label + '</label>' +
+        '<input type="text" id="f-' + key + '-' + f.id + '" placeholder="' + (f.placeholder || "") + '">' +
+        (f.hint ? '<div class="hint">' + f.hint + '</div>' : "");
+    }).join("");
+
+    return (
+      '<div class="panel" data-panel="' + key + '">' +
+        '<div class="card">' +
+          '<h2 id="form-title-' + key + '">New ' + cfg.label + '</h2>' +
+          fieldsHtml +
+          '<div class="form-actions">' +
+            '<button class="primary" data-action="publish" data-type="' + key + '">Publish to site</button>' +
+            '<button class="ghost" data-action="cancel-edit" data-type="' + key + '" style="display:none;">Cancel edit</button>' +
+            '<span class="msg" id="msg-' + key + '"></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="entries">' +
+          '<h3>Published ' + cfg.label.toLowerCase() + 's</h3>' +
+          '<div id="list-' + key + '" class="loading">loading…</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function buildPanels() {
+    var container = document.getElementById("panels");
+    container.innerHTML = Object.keys(TYPES).map(function (k) { return panelHtml(k, TYPES[k]); }).join("");
+
+    container.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      var type = btn.getAttribute("data-type");
+      var action = btn.getAttribute("data-action");
+      if (action === "publish") publish(type);
+      if (action === "cancel-edit") cancelEdit(type);
+      if (action === "edit") startEdit(btn.getAttribute("data-type"), btn.getAttribute("data-id"));
+      if (action === "delete") deleteEntry(btn.getAttribute("data-type"), btn.getAttribute("data-id"));
+    });
+  }
+
+  function getFormValues(key) {
+    var cfg = TYPES[key];
+    var obj = {};
+    cfg.fields.forEach(function (f) {
+      obj[f.id] = document.getElementById("f-" + key + "-" + f.id).value;
+    });
+    return obj;
+  }
+
+  function setFormValues(key, values) {
+    var cfg = TYPES[key];
+    cfg.fields.forEach(function (f) {
+      document.getElementById("f-" + key + "-" + f.id).value = values[f.id] || "";
+    });
+  }
+
+  function setMsg(key, text, ok) {
+    var el = document.getElementById("msg-" + key);
+    el.textContent = text;
+    el.className = "msg " + (ok ? "ok" : "err");
+  }
+
+  async function loadList(key) {
+    var cfg = TYPES[key];
+    var listEl = document.getElementById("list-" + key);
+    listEl.innerHTML = '<div class="loading">loading…</div>';
+    try {
+      var result = await ghGetFile(cfg.path);
+      state[key] = { sha: result.sha, data: result.data, editingId: null };
+      renderList(key);
+    } catch (err) {
+      listEl.innerHTML = '<div class="loading">' + (getToken() ? "couldn't load — check your token has access to this repo." : "connect a GitHub token above to load and publish.") + '</div>';
+    }
+  }
+
+  function renderList(key) {
+    var cfg = TYPES[key];
+    var listEl = document.getElementById("list-" + key);
+    var data = (state[key] && state[key].data) || [];
+    if (!data.length) {
+      listEl.innerHTML = '<div class="loading">nothing published yet</div>';
+      return;
+    }
+    listEl.innerHTML = data.map(function (entry) {
+      var p = cfg.preview(entry);
+      return (
+        '<div class="entry">' +
+          '<div class="preview"><div class="t">' + AetherSite.escapeHtml(p.t) + '</div><div class="s">' + AetherSite.escapeHtml(p.s) + '</div></div>' +
+          '<div class="actions">' +
+            '<button data-action="edit" data-type="' + key + '" data-id="' + entry.id + '">Edit</button>' +
+            '<button class="danger" data-action="delete" data-type="' + key + '" data-id="' + entry.id + '">Delete</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join("");
+  }
+
+  function startEdit(key, id) {
+    var data = state[key].data;
+    var entry = data.find(function (e) { return e.id === id; });
+    if (!entry) return;
+    state[key].editingId = id;
+    setFormValues(key, entry);
+    document.getElementById("form-title-" + key).textContent = "Editing " + TYPES[key].label.toLowerCase();
+    document.querySelector('[data-action="cancel-edit"][data-type="' + key + '"]').style.display = "inline-block";
+    setMsg(key, "", true);
+    document.querySelector('.panel[data-panel="' + key + '"] .card').scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelEdit(key) {
+    state[key].editingId = null;
+    setFormValues(key, TYPES[key].empty);
+    document.getElementById("form-title-" + key).textContent = "New " + TYPES[key].label;
+    document.querySelector('[data-action="cancel-edit"][data-type="' + key + '"]').style.display = "none";
+    setMsg(key, "", true);
+  }
+
+  async function publish(key) {
+    if (!getToken()) { setMsg(key, "connect a GitHub token first.", false); return; }
+    var cfg = TYPES[key];
+    var values = getFormValues(key);
+    var hasContent = cfg.fields.some(function (f) { return f.type === "textarea" && values[f.id] && values[f.id].trim(); });
+    if (!hasContent) { setMsg(key, "write something first.", false); return; }
+
+    var btn = document.querySelector('[data-action="publish"][data-type="' + key + '"]');
+    btn.disabled = true;
+    setMsg(key, "publishing…", true);
+
+    try {
+      if (!state[key]) await loadList(key);
+      if (!state[key]) throw new Error("could not read the current file from GitHub — check the token.");
+      var s = state[key];
+      var editingId = s.editingId;
+      var data = s.data.slice();
+
+      if (editingId) {
+        var idx = data.findIndex(function (e) { return e.id === editingId; });
+        if (idx > -1) data[idx] = Object.assign({}, data[idx], values);
+      } else {
+        var newEntry = Object.assign({ id: genId(cfg.idPrefix) }, values);
+        data.unshift(newEntry);
+      }
+
+      var message = (editingId ? "Update " : "Add ") + cfg.label.toLowerCase() + ": " + (values.title || values.meta || "untitled");
+      var result = await ghPutFile(cfg.path, data, s.sha, message);
+
+      state[key] = { sha: result.content.sha, data: data, editingId: null };
+      renderList(key);
+      cancelEdit(key);
+      setMsg(key, "published ✓ — it'll be live on the site in a minute or two.", true);
+    } catch (err) {
+      setMsg(key, err.message || "something went wrong.", false);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function deleteEntry(key, id) {
+    if (!getToken()) return;
+    if (!confirm("Delete this " + TYPES[key].label.toLowerCase() + " from the live site? This can't be undone from here.")) return;
+    try {
+      var s = state[key];
+      var data = s.data.filter(function (e) { return e.id !== id; });
+      var result = await ghPutFile(TYPES[key].path, data, s.sha, "Delete " + TYPES[key].label.toLowerCase());
+      state[key] = { sha: result.content.sha, data: data, editingId: null };
+      renderList(key);
+    } catch (err) {
+      alert(err.message || "could not delete.");
+    }
+  }
+
+  // ---------- tabs ----------
+  function wireTabs() {
+    var tabButtons = document.querySelectorAll("nav.tabs button");
+    tabButtons.forEach(function (b) {
+      b.addEventListener("click", function () {
+        tabButtons.forEach(function (x) { x.classList.remove("active"); });
+        b.classList.add("active");
+        var key = b.getAttribute("data-tab");
+        document.querySelectorAll(".panel").forEach(function (p) {
+          p.classList.toggle("active", p.getAttribute("data-panel") === key);
+        });
+        if (!state[key]) loadList(key);
+      });
+    });
+  }
+
+  function initApp() {
+    refreshTokenUI();
+    buildPanels();
+    Object.keys(TYPES).forEach(function (k) { setFormValues(k, TYPES[k].empty); });
+    document.querySelector('.panel[data-panel="poems"]').classList.add("active");
+    wireTabs();
+    loadList("poems");
+  }
+})();
+</script>
+
+</body>
+</html>
