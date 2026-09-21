@@ -1,312 +1,482 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>aether.nic — Literary Archive</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>aether.nic — Literary Archive</title>
 
-  <style>
-    :root {
-      --bg: #f8f6f2;
-      --text: #1f1f1f;
-      --muted: #6b6b6b;
-      --accent: #2f5d50;
-      --line: #ddd;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 
-    * {
-      box-sizing: border-box;
-    }
+<style>
+  :root {
+    --deep: #1b1830;
+    --mid: #34294f;
+    --dusk: #4a3a66;
+    --lavender: #b9a8dd;
+    --lavender-soft: #d8cdec;
+    --teal: #7fa89f;
+    --rose: #d7aebd;
+    --cream: #f4ede2;
+    --cream-dim: #cfc4d9;
+    --ink: #221d33;
+    --line: rgba(244, 237, 226, 0.16);
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "EB Garamond", Georgia, "Times New Roman", serif;
+  }
 
-    /* Command button style for all sections */
-    .command-button {
-      display: inline-block;
-      margin-top: 1.5rem;
-      padding: 0.75rem 1.7rem;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 0.9rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      border-radius: 999px;
-      transition: all 0.25s ease;
-    }
+  * { box-sizing: border-box; }
 
-    .command-button:hover {
-      background-color: var(--accent);
-      color: #ffffff;
-    }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
 
-    body {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-    }
+  body {
+    margin: 0;
+    background: var(--deep);
+    color: var(--cream);
+    font-family: var(--body);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    header {
-      padding: 4.5rem 1.5rem 3.5rem;
-      text-align: center;
-      border-bottom: 1px solid var(--line);
-    }
+  a { color: inherit; }
 
-    header h1 {
-      margin: 0;
-      font-size: 3rem;
-      letter-spacing: 0.04em;
-    }
+  ::selection { background: var(--dusk); color: var(--cream); }
 
-    header .penname {
-      margin-top: 0.6rem;
-      font-size: 1rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    z-index: 5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 
-    header p {
-      margin: 1.8rem auto 0;
-      max-width: 720px;
-      color: var(--muted);
-      font-style: italic;
-    }
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1.5rem;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 18%, rgba(185, 168, 221, 0.28), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 85%, rgba(127, 168, 159, 0.18), transparent 65%),
+      linear-gradient(180deg, var(--deep) 0%, var(--mid) 55%, var(--dusk) 100%);
+  }
 
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 2.2rem;
-      padding: 1.2rem;
-      border-bottom: 1px solid var(--line);
-    }
+  .motes { position: absolute; inset: 0; overflow: hidden; }
+  .mote {
+    position: absolute;
+    width: var(--s, 3px);
+    height: var(--s, 3px);
+    border-radius: 50%;
+    background: var(--cream);
+    opacity: 0.35;
+    filter: blur(0.5px);
+    animation: drift var(--d, 18s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) translateX(0); opacity: 0.15; }
+    50% { transform: translateY(-40px) translateX(12px); opacity: 0.55; }
+  }
 
-    nav a {
-      text-decoration: none;
-      color: var(--text);
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
+  .hero-eyebrow {
+    font-family: var(--body);
+    font-style: italic;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
+    color: var(--lavender-soft);
+    font-size: 0.95rem;
+    margin-bottom: 1.6rem;
+    opacity: 0.85;
+  }
 
-    nav a:hover {
-      color: var(--accent);
-    }
+  .hero h1 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(3.4rem, 11vw, 7rem);
+    margin: 0;
+    letter-spacing: 0.03em;
+    background: linear-gradient(180deg, var(--cream) 20%, var(--lavender-soft) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-wrap: balance;
+  }
 
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 3.5rem 1.5rem;
-    }
+  .hero-sub {
+    margin: 1.8rem auto 0;
+    max-width: 42rem;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--cream-dim);
+    font-style: italic;
+  }
 
-    section {
-      margin-bottom: 5.5rem;
-      max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-    }
+  .hero-email {
+    margin-top: 1.4rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: var(--cream-dim);
+    text-decoration: none;
+    opacity: 0.75;
+    border-bottom: 1px solid transparent;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+  }
+  .hero-email:hover { opacity: 1; border-color: var(--lavender); }
 
-    section .command-button {
-      display: inline-block;
-      margin-top: 1.5rem;
-    }
+  .hero-line {
+    margin-top: 3rem;
+    width: 1px;
+    height: 3.5rem;
+    background: linear-gradient(180deg, transparent, var(--lavender), transparent);
+    animation: lengthen 2.6s ease-in-out infinite;
+  }
+  @keyframes lengthen {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
 
-    section h2 {
-      font-size: 2rem;
-      margin-bottom: 0.8rem;
-    }
+  .hero-books {
+    margin-top: 2.6rem;
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--line);
+    display: inline-block;
+  }
 
-    section p.description {
-      color: var(--muted);
-      margin-bottom: 2.2rem;
-      max-width: 640px;
-    }
+  .hero-books-label {
+    display: block;
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
+    color: var(--teal);
+    margin-bottom: 0.7rem;
+    text-align: center;
+  }
 
-    .placeholder {
-      border-left: 3px solid var(--accent);
-      padding: 1.1rem 1.6rem;
-      background: #ffffff;
-      color: var(--muted);
-      font-style: italic;
-    }
+  .hero-books ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.4rem;
+  }
 
-    /* About Me section: landscape style, smaller font, elegant serif */
-    #about {
-      background-color: #e6e6e6;
-      border-top: 1px solid #ddd;
-      padding: 2rem 2.5rem;
-      margin-top: 3rem;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      max-width: 800px;       /* landscape feel */
-      margin-left: auto;
-      margin-right: auto;
-      flex-direction: column;
-      text-align: left;
-    }
+  .hero-books li {
+    font-size: 0.85rem;
+    color: var(--cream-dim);
+    opacity: 0.8;
+  }
 
-    #about h2 {
-      font-size: 1.4rem;      /* smaller than section titles */
-      margin-bottom: 1rem;
-      font-family: "Palatino Linotype", "Book Antiqua", serif;
-      color: var(--text);
-    }
+  .hero-books li .title {
+    font-style: italic;
+    color: var(--lavender-soft);
+  }
 
-    #about .description {
-      font-style: italic;
-      color: #4f4f4f;
-      line-height: 1.6;
-      font-size: 0.92rem;      /* smaller than main text */
-      font-family: "Palatino Linotype", "Book Antiqua", serif;
-    }
+  .hero-books li .by {
+    font-size: 0.78rem;
+    opacity: 0.75;
+  }
 
-    footer {
-      text-align: center;
-      padding: 2.5rem 1.5rem;
-      border-top: 1px solid var(--line);
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.4rem, 4vw, 3rem);
+    padding: 1.1rem 1.5rem;
+    background: rgba(27, 24, 48, 0.72);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
 
-    /* Mobile responsiveness */
-    @media (max-width: 600px) {
-      #about {
-        flex-direction: column;
-        padding: 1.5rem 1rem;
-      }
+  nav a {
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    transition: color 0.3s ease;
+    position: relative;
+  }
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px;
+    background: var(--lavender);
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+  }
+  nav a:hover { color: var(--cream); }
+  nav a:hover::after { transform: scaleX(1); }
 
-      #about .description {
-        font-size: 0.88rem;
-        line-height: 1.5;
-      }
+  .chapter {
+    position: relative;
+    padding: clamp(5rem, 12vw, 9rem) 1.5rem;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .chapter.in-view { opacity: 1; transform: translateY(0); }
 
-      main {
-        padding: 2rem 1rem;
-      }
+  .chapter--i   { background: linear-gradient(180deg, var(--dusk), #3d3159); }
+  .chapter--ii  { background: linear-gradient(180deg, #3d3159, #2c2947); }
+  .chapter--iii { background: linear-gradient(180deg, #2c2947, #24213c); }
 
-      nav {
-        flex-direction: column;
-        gap: 1rem;
-      }
+  .chapter-inner { max-width: 640px; }
 
-      header p {
-        font-size: 0.95rem;
-      }
+  .chapter-num {
+    display: block;
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--teal);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
 
-      section h2 {
-        font-size: 1.6rem;
-      }
+  .chapter h2 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 6vw, 3.4rem);
+    margin: 0 0 1.2rem;
+    color: var(--cream);
+  }
 
-      section p.description {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+  .chapter p.desc {
+    color: var(--cream-dim);
+    font-size: 1.1rem;
+    margin: 0 auto 2.2rem;
+    max-width: 34rem;
+  }
 
-  <!-- Google tag (gtag.js) -->
+  .thread {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--lavender-soft);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.2rem;
+    transition: border-color 0.3s ease, gap 0.3s ease, color 0.3s ease;
+  }
+  .thread:hover { border-color: var(--lavender); gap: 0.9rem; color: var(--cream); }
+  .thread svg { width: 1rem; height: 1rem; transition: transform 0.3s ease; }
+  .thread:hover svg { transform: translateX(3px); }
+
+  .letter-wrap {
+    background: var(--ink);
+    padding: clamp(5rem, 12vw, 8rem) 1.5rem;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .letter-wrap.in-view { opacity: 1; transform: translateY(0); }
+
+  .letter {
+    max-width: 620px;
+    text-align: left;
+    position: relative;
+    padding-left: clamp(1.5rem, 4vw, 2.5rem);
+    border-left: 1px solid var(--line);
+  }
+
+  .letter-eyebrow {
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--rose);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    margin-bottom: 1.4rem;
+    display: block;
+  }
+
+  .letter p {
+    color: var(--cream-dim);
+    font-size: 1.05rem;
+    margin: 0 0 1.3rem;
+  }
+
+  .letter p:last-of-type { margin-bottom: 0; }
+
+  .letter .sign {
+    margin-top: 2rem;
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--lavender-soft);
+    font-size: 1.2rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+    color: var(--cream-dim);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
+  footer a.hero-email { margin-top: 0; }
+
+  @media (max-width: 600px) {
+    nav { gap: 1.2rem; }
+    .chapter { padding: 4rem 1.2rem; }
+  }
+</style>
+
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PPQ94GQET9"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-PPQ94GQET9');
 </script>
 </head>
 
 <body>
 
-  <header>
-    <h1>aether</h1>
-    <div class="penname">literary archive</div>
+<div class="grain"></div>
 
-    <p>
-      Pharmacist by training. Writer as a calling felt.<br>
-      A growing collection of fragments written in moments of clarity and confusion.
-      Some projects are finished, others abandoned—all of them part of the learning.<br>
-      This is where ideas are tested, broken, and sometimes made useful.
-    </p>
-  </header>
+<header class="hero">
+  <div class="motes" id="motes"></div>
+  <div class="hero-eyebrow">a literary archive, kept quietly</div>
+  <h1>aether</h1>
+  <p class="hero-sub">
+    Pharmacist by training, writer as a calling felt.<br>
+    Fragments written in moments of clarity and confusion,
+    left unfinished on purpose, and read by candlelight.
+  </p>
+  <a class="hero-email" href="mailto:nikaether.ph@gmail.com">nikaether.ph@gmail.com</a>
+  <div class="hero-line"></div>
 
-  <nav>
-    <a href="#poetry">Poetry</a>
-    <a href="#fragments">Fragments</a>
-    <a href="#pharmaceutics">Pharmaceutics</a>
-  </nav>
+  <div class="hero-books">
+    <span class="hero-books-label">book recommendations</span>
+    <ul>
+      <li><span class="title">The Book of Jasher</span></li>
+      <li><span class="title">Confessions</span> <span class="by">— Augustine</span></li>
+    </ul>
+  </div>
+</header>
 
-  <main>
+<nav>
+  <a href="#poetry">Poetry</a>
+  <a href="#fragments">Fragments</a>
+  <a href="#pharmaceutics">Pharmaceutics</a>
+  <a href="#about">About</a>
+</nav>
 
-    <section id="poetry">
-      <h2>Poetry</h2>
-      <p class="description">
-        Poems shaped by attention, restraint, and silence.
-        Language allowed to breathe before it explains itself.
-      </p>
+<section class="chapter chapter--i" id="poetry">
+  <div class="chapter-inner">
+    <span class="chapter-num">Chapter I</span>
+    <h2>Poetry</h2>
+    <p class="desc">Poems shaped by attention, restraint, and silence. Language allowed to breathe before it explains itself.</p>
+    <a href="poems.html" class="thread">Read the poems
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
 
-      <div class="placeholder">
-        Poetry will be published here in time.
-      </div>
+<section class="chapter chapter--ii" id="fragments">
+  <div class="chapter-inner">
+    <span class="chapter-num">Chapter II</span>
+    <h2>Fragments</h2>
+    <p class="desc">Notes, aphorisms, and incomplete thoughts. Written quickly, revised slowly, or left unresolved.</p>
+    <a href="fragments1.html" class="thread">Wander the fragments
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
 
-      <a href="poems.html" class="command-button">Read Poems</a>
-    </section>
+<section class="chapter chapter--iii" id="pharmaceutics">
+  <div class="chapter-inner">
+    <span class="chapter-num">Chapter III</span>
+    <h2>Pharmaceutics</h2>
+    <p class="desc">Writing informed by pharmacy, medicine, and ethics. Observations on healing, systems, limits, and responsibility.</p>
+    <a href="pharmaceutics.html" class="thread">Enter the essays
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
 
-    <section id="fragments">
-      <h2>Fragments</h2>
-      <p class="description">
-        Notes, aphorisms, and incomplete thoughts.
-        Written quickly, revised slowly, or left unresolved.
-      </p>
+<section class="letter-wrap" id="about">
+  <div class="letter">
+    <span class="letter-eyebrow">A note, before you go</span>
+    <p>I write from the threshold between order and ache. My work moves between fragments, reflection, and pharmaceutics, not as escape, but as integration.</p>
+    <p>I'm interested in how discipline restores clarity, how the body carries truth, and how healing begins when we stop anesthetizing discomfort and learn to listen again. I write slowly, often after silence, often after resistance.</p>
+    <p>This space is for thoughts that don't rush to resolve themselves: for language that steadies, for systems that heal, for beauty that returns only when it's honest.</p>
+    <p>Nothing here is written to perform.<br>Everything here is written to remain.</p>
+    <div class="sign">— aether</div>
+  </div>
+</section>
 
-      <div class="placeholder">
-        Fragments forthcoming.
-      </div>
+<footer>
+  © <span id="year"></span> aether.nic · all rights reserved · <a class="hero-email" href="mailto:nikaether.ph@gmail.com">nikaether.ph@gmail.com</a>
+</footer>
 
-      <a href="fragments1.html" class="command-button">Read Fragments</a>
-    </section>
-
-    <section id="pharmaceutics">
-      <h2>Pharmaceutics</h2>
-      <p class="description">
-        Writing informed by pharmacy, medicine, and ethics.
-        Observations on healing, systems, limits, and responsibility.
-      </p>
-
-      <div class="placeholder">
-        Pharmaceutics essays and reflections will appear here.
-      </div>
-
-      <a href="pharmaceutics.html" class="command-button">Read Pharmaceutics</a>
-    </section>
-
-    <section id="about">
-      <h2>About Me</h2>
-      <p class="description">
-        I write from the intersection of order and ache.<br>
-        My work moves between fragments, reflection, and pharmaceutics not as escape, but as integration.<br><br>
-
-        I’m interested in how discipline restores clarity, how the body carries truth, and how healing begins when we stop anesthetizing discomfort and learn to listen again. I write slowly, often after silence, often after resistance.<br><br>
-
-        This space is for thoughts that don’t rush to resolve themselves:<br>
-        for language that steadies, for systems that heal, for beauty that returns only when it’s honest.<br><br>
-
-        Nothing here is written to perform.<br>
-        Everything here is written to remain.
-      </p>
-    </section>
-
-  </main>
-
-  <footer>
-    © <span id="year"></span> aether.nic • All rights reserved
-  </footer>
-
-  <script>
+<script>
+  try {
     document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  } catch (e) {}
+
+  try {
+    var field = document.getElementById("motes");
+    var n = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 22;
+    for (var i = 0; i < n; i++) {
+      var m = document.createElement("span");
+      m.className = "mote";
+      m.style.left = Math.random() * 100 + "%";
+      m.style.top = Math.random() * 100 + "%";
+      m.style.setProperty("--s", (1.5 + Math.random() * 2.5) + "px");
+      m.style.setProperty("--d", (12 + Math.random() * 14) + "s");
+      m.style.setProperty("--delay", (Math.random() * 8) + "s");
+      field.appendChild(m);
+    }
+  } catch (e) {}
+
+  try {
+    var targets = document.querySelectorAll(".chapter, .letter-wrap");
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.22 });
+      targets.forEach(function (t) { io.observe(t); });
+    } else {
+      targets.forEach(function (t) { t.classList.add("in-view"); });
+    }
+  } catch (e) {}
+</script>
 
 </body>
 </html>
