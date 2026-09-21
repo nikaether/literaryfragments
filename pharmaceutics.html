@@ -1,185 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pharmaceutics — aether.nic</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmaceutics — aether.nic</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      background-color: #f8f6f2;
-      color: #1f1f1f;
-      line-height: 1.8;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 
-    header {
-      padding: 3.5rem 1.5rem;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
+<style>
+  :root {
+    --deep: #1b1830;
+    --mid: #34294f;
+    --dusk: #4a3a66;
+    --lavender: #b9a8dd;
+    --lavender-soft: #d8cdec;
+    --teal: #7fa89f;
+    --rose: #d7aebd;
+    --cream: #f4ede2;
+    --cream-dim: #cfc4d9;
+    --ink: #221d33;
+    --line: rgba(244, 237, 226, 0.16);
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "EB Garamond", Georgia, "Times New Roman", serif;
+  }
 
-    header h1 {
-      margin: 0;
-      font-size: 2.4rem;
-      letter-spacing: 0.04em;
-    }
+  * { box-sizing: border-box; }
 
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 3rem 1.5rem;
-    }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, var(--deep) 0%, var(--mid) 45%, #2c2947 100%);
+    background-attachment: fixed;
+    color: var(--cream);
+    font-family: var(--body);
+    line-height: 1.85;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    article {
-      background-color: #f2f2f2;
-      padding: 2.4rem 2.7rem;
-      margin: 2.5rem 0;
-      border-left: 5px solid #2f5d50;
-      border-radius: 8px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    }
+  a { color: inherit; }
+  ::selection { background: var(--dusk); color: var(--cream); }
 
-    article h2 {
-      margin-top: 0;
-      margin-bottom: 1.6rem;
-      font-size: 1.6rem;
-    }
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.4rem, 4vw, 3rem);
+    padding: 1.1rem 1.5rem;
+    background: rgba(27, 24, 48, 0.72);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
 
-    article h3 {
-      margin-top: 2.6rem;
-      margin-bottom: 0.8rem;
-      font-size: 1.25rem;
-    }
+  nav a {
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    transition: color 0.3s ease;
+    position: relative;
+  }
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px;
+    background: var(--lavender);
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+  }
+  nav a:hover { color: var(--cream); }
+  nav a:hover::after { transform: scaleX(1); }
 
-    article p {
-      margin-bottom: 1.4rem;
-      color: #333;
-    }
+  header {
+    text-align: center;
+    padding: clamp(4rem, 10vw, 6.5rem) 1.5rem 3rem;
+  }
 
-    .highlight {
-      background: #ffffff;
-      padding: 1.3rem 1.5rem;
-      margin: 2.4rem 0;
-      border-left: 4px solid #2f5d50;
-      font-style: italic;
-    }
+  .eyebrow {
+    display: block;
+    font-family: var(--display);
+    font-style: italic;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
 
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid #ddd;
-      font-size: 0.85rem;
-      color: #6b6b6b;
-    }
+  header h1 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.8rem, 8vw, 4.2rem);
+    margin: 0;
+    background: linear-gradient(180deg, var(--cream) 20%, var(--lavender-soft) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-wrap: balance;
+  }
 
-    footer a {
-      color: #2f5d50;
-      text-decoration: none;
-    }
-  </style>
+  header p.tagline {
+    margin: 1.4rem auto 0;
+    max-width: 34rem;
+    color: var(--cream-dim);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 6rem;
+  }
+
+  article {
+    background: rgba(244, 237, 226, 0.04);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--lavender);
+    padding: clamp(1.8rem, 5vw, 3rem) clamp(1.6rem, 5vw, 3rem);
+    border-radius: 4px;
+  }
+
+  article h2 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.7rem;
+    margin: 0 0 0.6rem;
+    color: var(--cream);
+  }
+
+  article > p em {
+    display: block;
+    color: var(--teal);
+    font-style: italic;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 1.8rem;
+  }
+
+  article h3 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin: 2.4rem 0 0.9rem;
+    color: var(--rose);
+  }
+
+  article p {
+    color: var(--cream-dim);
+    margin-bottom: 1.4rem;
+    font-size: 1.03rem;
+  }
+
+  article strong { color: var(--cream); font-weight: 600; }
+
+  .highlight {
+    background: rgba(185, 168, 221, 0.08);
+    border-left: 2px solid var(--teal);
+    padding: 1.3rem 1.6rem;
+    margin: 2.2rem 0;
+    font-style: italic;
+    color: var(--lavender-soft);
+    font-size: 1.02rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+    color: var(--cream-dim);
+    font-size: 0.85rem;
+  }
+
+  footer a.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--lavender-soft);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.15rem;
+    transition: border-color 0.3s ease, gap 0.3s ease, color 0.3s ease;
+  }
+  footer a.back:hover { border-color: var(--lavender); gap: 0.8rem; color: var(--cream); }
+  footer a.back svg { width: 0.95rem; height: 0.95rem; transform: rotate(180deg); }
+</style>
 </head>
 
 <body>
 
+<nav>
+  <a href="index.html">Home</a>
+  <a href="poems.html">Poetry</a>
+  <a href="fragments1.html">Fragments</a>
+</nav>
+
 <header>
+  <span class="eyebrow">Chapter III</span>
   <h1>Pharmaceutics</h1>
+  <p class="tagline">Writing informed by pharmacy, medicine, and ethics — observations on healing, systems, limits, and responsibility.</p>
 </header>
 
-<main>
-
-<article>
-
-  <h2><strong>AI and Pharmaceutics: Revolutionizing Drug Development for the Future</strong></h2>
- <p><em>February 5, 2026</em></p>
-  <p>
-    Artificial intelligence (AI) has become a household term, often associated with cheating on student tests or creating money-making schemes. It’s easy to see AI as something that disrupts classrooms or helps people get ahead quickly—but in pharmaceutics, its impact is nothing short of transformative.
-  </p>
-
-  <p>
-    The future of drug development is shifting, and AI is at the center of that change. But separating sensational headlines from genuine scientific transformation remains essential. Understanding where AI truly alters pharmaceutics requires patience, clarity, and restraint.
-  </p>
-
-  <div class="highlight">
-    The question is not whether AI will change pharmaceutics, but whether we are prepared to steward that change responsibly.
-  </div>
-
-  <h3><strong>AI in Pharmaceutics: Beyond the Headlines</strong></h3>
-
-  <p>
-    AI is often framed as a shortcut or a threat, yet in pharmaceutics it functions as an amplifier of careful work rather than a replacement for it. Machine learning systems are now capable of identifying drug candidates, analyzing genetic data, and predicting molecular behavior with remarkable efficiency.
-  </p>
-
-  <p>
-    These tools allow researchers to compress years of early-stage research into months. For diseases with limited treatment options, this compression of time carries profound ethical and clinical implications.
-  </p>
-
-  <h3><strong>AI Tools That Are Changing the Game in Pharmaceutics</strong></h3>
-
-  <p>
-    <strong>Atomwise</strong> uses deep learning to predict molecular interactions, enabling rapid identification of promising compounds.
-  </p>
-
-  <p>
-    <strong>Insilico Medicine</strong> applies AI to drug design itself, with AI-generated compounds already advancing into clinical trials.
-  </p>
-
-  <p>
-    <strong>DeepMind’s AlphaFold</strong> has transformed protein structure prediction, unlocking drug targets that were previously inaccessible.
-  </p>
-
-  <div class="highlight">
-    These technologies are not speculative—they are already reshaping how discovery is conducted and funded.
-  </div>
-
-  <h3><strong>The Race to Market: Will AI Increase Competition?</strong></h3>
-
-  <p>
-    As AI accelerates development, competition intensifies. Multiple companies can now pursue similar therapeutic targets simultaneously, shifting the challenge from discovery to validation, regulation, and delivery.
-  </p>
-
-  <p>
-    Speed becomes an advantage, but it also introduces risk. Faster development cycles demand equally rigorous safeguards to ensure patient safety is not compromised.
-  </p>
-
-  <h3><strong>AI in Drug Development: The Promise and the Pitfalls</strong></h3>
-
-  <p>
-    AI may predict how a drug behaves in the body, but prediction does not eliminate uncertainty. Clinical trials, pharmacovigilance, and post-market surveillance remain irreplaceable.
-  </p>
-
-  <p>
-    While AI can assist with real-time safety monitoring, biological systems resist complete abstraction. Long-term observation remains essential.
-  </p>
-
-  <h3><strong>How Will Governing Bodies Keep Up with AI?</strong></h3>
-
-  <p>
-    Regulatory frameworks were not designed for technologies that evolve as rapidly as AI. Transparency, accountability, and explainability must become central regulatory principles.
-  </p>
-
-  <div class="highlight">
-    Acceleration without governance risks harm; governance without adaptation risks irrelevance.
-  </div>
-
-  <h3><strong>AI in Pharmaceutics: The Future Looks Bright… But Cautiously</strong></h3>
-
-  <p>
-    AI offers reduced costs, faster timelines, and more precise therapies. But innovation must move alongside ethics, regulation, and care.
-  </p>
-
-  <p>
-    The future of pharmaceutics will not be defined by speed alone, but by how responsibly intelligence—both artificial and human—is applied.
-  </p>
-
-</article>
-
-</main>
+<main id="essays-list"></main>
+<p class="more" id="empty-note" hidden style="text-align:center; color: var(--cream-dim); font-style: italic; opacity: .65;">essays will gather here in time</p>
 
 <footer>
-  <a href="index.html">← Back to archive</a>
+  <a class="back" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    Back to archive
+  </a>
+  <div style="margin-top: 1rem;">© <span id="year"></span> aether.nic</div>
 </footer>
+
+<script src="assets/site.js"></script>
+<script>
+  try { document.getElementById("year").textContent = new Date().getFullYear(); } catch (e) {}
+
+  (async function () {
+    var list = document.getElementById("essays-list");
+    var emptyNote = document.getElementById("empty-note");
+    try {
+      var essays = await AetherSite.fetchJson("data/pharmaceutics.json");
+      if (!essays.length) {
+        emptyNote.hidden = false;
+        return;
+      }
+      essays.forEach(function (entry) {
+        var article = document.createElement("article");
+        article.innerHTML = AetherSite.renderEssay(entry);
+        list.appendChild(article);
+      });
+    } catch (e) {
+      emptyNote.hidden = false;
+      emptyNote.textContent = "essays could not be loaded right now";
+    }
+  })();
+</script>
 
 </body>
 </html>

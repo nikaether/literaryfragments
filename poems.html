@@ -2,143 +2,245 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Poetry — aether.nic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poetry — aether.nic</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 
 <style>
+  :root {
+    --deep: #1b1830;
+    --mid: #34294f;
+    --dusk: #4a3a66;
+    --lavender: #b9a8dd;
+    --lavender-soft: #d8cdec;
+    --teal: #7fa89f;
+    --rose: #d7aebd;
+    --cream: #f4ede2;
+    --cream-dim: #cfc4d9;
+    --ink: #221d33;
+    --line: rgba(244, 237, 226, 0.16);
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "EB Garamond", Georgia, "Times New Roman", serif;
+  }
 
-body {
+  * { box-sizing: border-box; }
+
+  body {
     margin: 0;
-    padding: 0;
-    background-color: #f4f1ec;
-    font-family: Georgia, serif;
-    color: #1a1a1a;
-}
+    background: linear-gradient(180deg, var(--deep) 0%, var(--mid) 45%, #2c2947 100%);
+    background-attachment: fixed;
+    color: var(--cream);
+    font-family: var(--body);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* Header */
-header {
-    text-align: center;
-    padding: 80px 20px 30px 20px;
-}
+  a { color: inherit; }
+  ::selection { background: var(--dusk); color: var(--cream); }
 
-header h1 {
-    font-size: 40px;
-    font-weight: 600;
-    margin: 0;
-    letter-spacing: 1px;
-}
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: clamp(1.4rem, 4vw, 3rem);
+    padding: 1.1rem 1.5rem;
+    background: rgba(27, 24, 48, 0.72);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
 
-hr {
-    width: 90%;
-    border: none;
-    border-top: 1px solid #ddd;
-    margin: 30px auto 60px auto;
-}
-
-/* Navigation */
-nav {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-nav a {
+  nav a {
     text-decoration: none;
-    margin: 0 20px;
-    color: #1a1a1a;
-    font-size: 14px;
-}
-
-nav a:hover {
-    text-decoration: underline;
-}
-
-/* Container */
-.container {
-    max-width: 800px;
-    margin: auto;
-    padding-bottom: 100px;
-}
-
-/* Poem Block (Same Style as Fragment Card) */
-.poem {
-    background-color: #ffffff;
-    padding: 50px 60px;
-    margin-bottom: 60px;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    transition: color 0.3s ease;
     position: relative;
-}
+  }
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px;
+    background: var(--lavender);
+    transform: scaleX(0);
+    transition: transform 0.35s ease;
+  }
+  nav a:hover { color: var(--cream); }
+  nav a:hover::after { transform: scaleX(1); }
 
-/* Left Accent Line */
-.poem::before {
+  header {
+    text-align: center;
+    padding: clamp(4rem, 10vw, 6.5rem) 1.5rem 3rem;
+  }
+
+  .eyebrow {
+    display: block;
+    font-family: var(--display);
+    font-style: italic;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  header h1 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.8rem, 8vw, 4.2rem);
+    margin: 0;
+    background: linear-gradient(180deg, var(--cream) 20%, var(--lavender-soft) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-wrap: balance;
+  }
+
+  header p.tagline {
+    margin: 1.4rem auto 0;
+    max-width: 34rem;
+    color: var(--cream-dim);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 6rem;
+  }
+
+  .poem {
+    position: relative;
+    padding: clamp(2rem, 5vw, 3.2rem) clamp(1.6rem, 5vw, 3.4rem);
+    margin-bottom: 3.5rem;
+    background: rgba(244, 237, 226, 0.04);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  .poem::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 0;
-    height: 100%;
-    width: 5px;
-    background-color: #2f5d50;
-}
+    top: 10%;
+    height: 80%;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--lavender), transparent);
+  }
 
-/* Poem Title */
-.poem-title {
-    font-size: 18px;
-    margin-bottom: 30px;
-    font-weight: 500;
-}
+  .poem-title {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--rose);
+    margin-bottom: 1.6rem;
+  }
 
-/* Poem Text */
-.poem-content {
-    font-size: 17px;
-    line-height: 2;
+  .poem-content {
+    font-size: 1.1rem;
+    line-height: 2.1;
     white-space: pre-line;
-}
+    color: var(--cream);
+  }
 
-/* Footer */
-footer {
+  .more {
     text-align: center;
-    padding: 40px 20px;
-    font-size: 12px;
-    color: #777;
-}
+    color: var(--cream-dim);
+    font-style: italic;
+    opacity: 0.65;
+    font-size: 0.95rem;
+    margin-top: 2rem;
+  }
 
+  footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: var(--ink);
+    border-top: 1px solid var(--line);
+    color: var(--cream-dim);
+    font-size: 0.85rem;
+  }
+
+  footer a.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--lavender-soft);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.15rem;
+    transition: border-color 0.3s ease, gap 0.3s ease, color 0.3s ease;
+  }
+  footer a.back:hover { border-color: var(--lavender); gap: 0.8rem; color: var(--cream); }
+  footer a.back svg { width: 0.95rem; height: 0.95rem; transform: rotate(180deg); }
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>Poetry</h1>
-</header>
-
-<hr>
-
 <nav>
-    <a href="index.html">Home</a>
-    <a href="fragments1.html">Fragments</a>
-    <a href="pharmaceutics.html">Pharmaceutics</a>
+  <a href="index.html">Home</a>
+  <a href="fragments1.html">Fragments</a>
+  <a href="pharmaceutics.html">Pharmaceutics</a>
 </nav>
+
+<header>
+  <span class="eyebrow">Chapter I</span>
+  <h1>Poetry</h1>
+  <p class="tagline">Poems shaped by attention, restraint, and silence — language allowed to breathe before it explains itself.</p>
+</header>
 
 <div class="container">
 
-    <!-- POEM 1 -->
-    <div class="poem">
-        <div class="poem-title">Poem I</div>
-        <div class="poem-content">
-I have known the glow of hope behind my eyes.
-I have watched it die.
-And though it stirs again, faint as a candle in the wind,
-I am ashamed to let the world behold it
-for fear the gods will snuff it out,
-and leave me with nothing but smoke.
-        </div>
-    </div>
+  <div id="poems-list"></div>
 
-    <!-- Add more poems like this -->
+  <p class="more" id="empty-note" hidden>more will gather here in time</p>
 
 </div>
 
 <footer>
-© 2026 aether.nic
+  <a class="back" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    Back to archive
+  </a>
+  <div style="margin-top: 1rem;">© <span id="year"></span> aether.nic</div>
 </footer>
+
+<script src="assets/site.js"></script>
+<script>
+  try { document.getElementById("year").textContent = new Date().getFullYear(); } catch (e) {}
+
+  (async function () {
+    var list = document.getElementById("poems-list");
+    var emptyNote = document.getElementById("empty-note");
+    try {
+      var poems = await AetherSite.fetchJson("data/poems.json");
+      if (!poems.length) {
+        emptyNote.hidden = false;
+        return;
+      }
+      poems.forEach(function (poem) {
+        var div = document.createElement("div");
+        div.className = "poem";
+        div.innerHTML = AetherSite.renderPoem(poem);
+        list.appendChild(div);
+      });
+    } catch (e) {
+      emptyNote.hidden = false;
+      emptyNote.textContent = "poems could not be loaded right now";
+    }
+  })();
+</script>
 
 </body>
 </html>
